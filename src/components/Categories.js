@@ -1,5 +1,5 @@
 import React from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 const categories = [
 	{
@@ -50,19 +50,38 @@ const Category = styled.div`
 	text-decoration: none;
 	color: inherit;
 	padding-bottom: 0.25rem;
+
 	&:hover {
 		color: #495057;
 	}
+
+	${(props) =>
+		props.active &&
+		css`
+			font-weight: 600; // 글꼴 두께
+			border-bottom: 2px solid #22b8cf; // 활성 카테고리 아래에 푸른색 하단 테두리를 추가
+			color: #22b8cf;
+			&:hover {
+				color: #3bc9db;
+			}
+		`}
+
 	& + & {
 		margin-left: 1rem;
 	}
 `;
 
-const Categories = () => {
+const Categories = ({ onSelect, category }) => {
 	return (
 		<CategoriesBlock>
-			{categories.map((category) => (
-				<Category key={category.name}>{category.text}</Category>
+			{categories.map((c) => (
+				<Category
+					key={c.name}
+					active={category === c.name}
+					onClick={() => onSelect(c.name)}
+				>
+					{c.text}
+				</Category>
 			))}
 		</CategoriesBlock>
 	);
