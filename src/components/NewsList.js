@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import styled from "styled-components";
 import NewsItem from "./NewsItem";
 import axios from "axios";
-import BounceLoader from "react-spinners/BounceLoader";
+import BeatLoader from "react-spinners/BeatLoader";
 
 const NewsListBlock = styled.div`
 	box-sizing: border-box; /* 패딩과 보더가 너비와 높이에 포함되도록 설정 */
@@ -21,6 +21,7 @@ const Spinner = styled.div`
 	box-sizing: border-box;
 	display: flex;
 	width: 768px;
+	height: 768px;
 	margin: 0 auto;
 	margin-top: 2rem;
 	align-items: center;
@@ -58,7 +59,7 @@ const NewsList = () => {
 		// return <NewsListBlock>대기 중...</NewsListBlock>;
 		return (
 			<Spinner>
-				<BounceLoader color="#000000" size={50} />
+				<BeatLoader color="#22b8cf" size={20} />
 			</Spinner>
 		);
 	}
