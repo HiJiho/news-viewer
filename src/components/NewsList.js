@@ -1,5 +1,7 @@
+import { useState, useEffect } from "react";
 import styled from "styled-components";
 import NewsItem from "./NewsItem";
+import axios from "axios";
 
 const NewsListBlock = styled.div`
 	box-sizing: border-box; /* 패딩과 보더가 너비와 높이에 포함되도록 설정 */
@@ -14,22 +16,43 @@ const NewsListBlock = styled.div`
 	}
 `;
 
-const sampleArticle = {
-	title: "제목",
-	description: "내용",
-	url: "https://google.com",
-	urlToImage: "https://via.placeholder.com/160",
-};
-
 const NewsList = () => {
+	const [articles, setArticles] = useState(null); // 리스트
+	const [loading, setLoading] = useState(false); // API 요청이 대기 중인지 판별
+
+	useEffect(() => {
+		// async를 사용하는 함수 따로 선언
+		const fetchData = async () => {
+			setLoading(true); // 요청 대기 중
+			try {
+				const response = await axios.get(
+					`https://newsapi.org/v2/top-headlines?country=kr&apiKey=${process.env.REACT_APP_NEWS_API_KEY}`
+				);
+				setArticles(response.data.articles);
+			} catch (e) {
+				console.log(e);
+			}
+			setLoading(false);
+		};
+		fetchData();
+	}, []);
+
+	// 대기 중일 때
+	if (loading) {
+		return <NewsListBlock>대기 중...</NewsListBlock>;
+	}
+
+	// 아직 articles 값이 설정되지 않았을 때
+	if (!articles) {
+		return null;
+	}
+
+	// articles 값이 유효할 때
 	return (
 		<NewsListBlock>
-			<NewsItem article={sampleArticle} />
-			<NewsItem article={sampleArticle} />
-			<NewsItem article={sampleArticle} />
-			<NewsItem article={sampleArticle} />
-			<NewsItem article={sampleArticle} />
-			<NewsItem article={sampleArticle} />
+			{articles.map((article) => (
+				<NewsItem key={article.url} article={article} />
+			))}
 		</NewsListBlock>
 	);
 };
