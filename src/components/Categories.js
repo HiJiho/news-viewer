@@ -55,6 +55,7 @@ const Category = styled.div`
 		color: #495057;
 	}
 
+	// Category 컴포넌트의 props
 	${(props) =>
 		props.active &&
 		css`
