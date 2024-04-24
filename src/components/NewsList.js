@@ -33,7 +33,7 @@ const Spinner = styled.div`
 	}
 `;
 
-const NewsList = () => {
+const NewsList = ({ category }) => {
 	const [articles, setArticles] = useState(null); // 리스트
 	const [loading, setLoading] = useState(false); // API 요청이 대기 중인지 판별
 
@@ -42,8 +42,9 @@ const NewsList = () => {
 		const fetchData = async () => {
 			setLoading(true); // 요청 대기 중
 			try {
+				const query = category === "all" ? "" : `&category=${category}`;
 				const response = await axios.get(
-					`https://newsapi.org/v2/top-headlines?country=kr&apiKey=${process.env.REACT_APP_NEWS_API_KEY}`
+					`https://newsapi.org/v2/top-headlines?country=kr${query}&apiKey=${process.env.REACT_APP_NEWS_API_KEY}`
 				);
 				setArticles(response.data.articles);
 			} catch (e) {
@@ -52,7 +53,7 @@ const NewsList = () => {
 			setLoading(false);
 		};
 		fetchData();
-	}, []);
+	}, [category]);
 
 	// 대기 중일 때
 	if (loading) {

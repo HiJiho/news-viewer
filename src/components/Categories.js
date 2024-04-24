@@ -57,7 +57,7 @@ const Category = styled.div`
 
 	// Category 컴포넌트의 props
 	${(props) =>
-		props.active &&
+		props.$active && // Transient Props
 		css`
 			font-weight: 600; // 글꼴 두께
 			border-bottom: 2px solid #22b8cf; // 활성 카테고리 아래에 푸른색 하단 테두리를 추가
@@ -78,7 +78,7 @@ const Categories = ({ onSelect, category }) => {
 			{categories.map((c) => (
 				<Category
 					key={c.name}
-					active={category === c.name}
+					$active={category === c.name}
 					onClick={() => onSelect(c.name)}
 				>
 					{c.text}
