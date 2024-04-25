@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
 import styled from "styled-components";
 import NewsItem from "./NewsItem";
 import axios from "axios";
 import BeatLoader from "react-spinners/BeatLoader";
+import usePromise from "../lib/usePromise";
 
 const NewsListBlock = styled.div`
 	box-sizing: border-box; /* 패딩과 보더가 너비와 높이에 포함되도록 설정 */
@@ -34,25 +34,11 @@ const Spinner = styled.div`
 `;
 
 const NewsList = ({ category }) => {
-	const [articles, setArticles] = useState(null); // 리스트
-	const [loading, setLoading] = useState(false); // API 요청이 대기 중인지 판별
-
-	useEffect(() => {
-		// async를 사용하는 함수 따로 선언
-		const fetchData = async () => {
-			setLoading(true); // 요청 대기 중
-			try {
-				const query = category === "all" ? "" : `&category=${category}`;
-				const response = await axios.get(
-					`https://newsapi.org/v2/top-headlines?country=kr${query}&apiKey=${process.env.REACT_APP_NEWS_API_KEY}`
-				);
-				setArticles(response.data.articles);
-			} catch (e) {
-				console.log(e);
-			}
-			setLoading(false);
-		};
-		fetchData();
+	const [loading, response, error] = usePromise(() => {
+		const query = category === "all" ? "" : `&category=${category}`;
+		return axios.get(
+			`https://newsapi.org/v2/top-headlines?country=kr${query}&apiKey=${process.env.REACT_APP_NEWS_API_KEY}`
+		);
 	}, [category]);
 
 	// 대기 중일 때
@@ -65,12 +51,18 @@ const NewsList = ({ category }) => {
 		);
 	}
 
-	// 아직 articles 값이 설정되지 않았을 때
-	if (!articles) {
+	// 에러가 발생했을 경우, error 기본값 = null
+	if (error) {
+		return <NewsListBlock>에러 발생!</NewsListBlock>;
+	}
+
+	// 아직 response 값이 설정되지 않았을 때, response 기본값 = null
+	if (!response) {
 		return null;
 	}
 
-	// articles 값이 유효할 때
+	// response 값이 유효할 때
+	const { articles } = response.data;
 	return (
 		<NewsListBlock>
 			{articles.map((article) => (
